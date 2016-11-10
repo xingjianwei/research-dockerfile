@@ -1,0 +1,12 @@
+#  docker build -t beagle/caravel-run:0.12 -f Dockerfile-run  .
+FROM beagle/caravel-base:1.0
+MAINTAINER xjw <xingjw@beagledata.com>
+RUN pip install caravel -i http://mirrors.aliyun.com/pypi/simple  --trusted-host mirrors.aliyun.com\
+&& fabmanager create-admin --app caravel --username admin --firstname admin --lastname user --email  admin@beagledata.com --password 123456 \
+&& caravel db upgrade \
+&& caravel load_examples \
+&& caravel init 
+
+EXPOSE 8088
+
+CMD caravel runserver -p 8088

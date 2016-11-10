@@ -1,0 +1,7 @@
+#  docker build -t beagle/caravel-npm:1.0 -f Dockerfile-npm  .
+FROM beagle/caravel-base:1.0
+MAINTAINER xjw <xingjw@beagledata.com>
+RUN yum -y install nodejs npm libX11-devel libXi-devel libXext-devel libGL-devel \
+&& yum clean all \
+&& npm config set registry " https://registry.npm.taobao.org " \
+&& npm install -g cnpm --registry=https://registry.npm.taobao.org

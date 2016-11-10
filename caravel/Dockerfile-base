@@ -1,0 +1,6 @@
+#  docker build -t beagle/caravel-base:1.0 -f Dockerfile-base  .
+FROM beagle/centos-python-pip:2.7.5
+MAINTAINER xjw <xingjw@beagledata.com>
+RUN yum -y install gcc git unzip libffi-devel python-devel python-pip python-wheel openssl-devel libsasl2-devel openldap-devel  \
+&& yum clean all \
+&& pip install virtualenv

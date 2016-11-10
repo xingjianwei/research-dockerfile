@@ -1,0 +1,10 @@
+#  docker build -t beagle/centos-python-pip-mongo:2.7.5 -f Dockerfile-pip-mongo  .
+FROM beagle/centos-python-pip:2.7.5
+MAINTAINER xjw <xingjw@beagledata.com>
+COPY mongodb-org-3.2.repo /etc/yum.repos.d/
+RUN yum -y install  mongodb-org-mongos \
+&& yum -y install mongodb-org-server \
+&& yum -y install mongodb-org-shell \
+#&& yum -y install mongodb-org-tools \
+&& yum clean all
+

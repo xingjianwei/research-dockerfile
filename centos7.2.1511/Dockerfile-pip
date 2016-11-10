@@ -1,0 +1,8 @@
+#  docker build -t beagle/centos-python-pip:2.7.5 -f Dockerfile-pip  .
+FROM centos:7.2.1511
+MAINTAINER xjw <xingjw@beagledata.com>
+RUN yum -y install epel-release \
+&& yum -y update \
+&& yum -y install python-pip  gcc gcc-c++ cpp  make openssl openssl-devel python-devel \
+&& yum clean all \
+&& pip install --upgrade pip

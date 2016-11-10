@@ -1,0 +1,37 @@
+# Copyright 2016 Teradata
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#  docker build -t beagle/presto-slave:0.145 -f Dockerfile-slave-0.145  .
+FROM teradatalabs/presto-yarn-cdh5-hive-slave
+MAINTAINER xjw <xingjw@beagledata.com>
+
+# ADD PRESTO FILE
+COPY files/presto-server-0.145.tar.gz /root/
+RUN tar xzvf /root/presto-server-0.145.tar.gz -C /opt/ \
+&& mv /opt/presto-server-0.145 /opt/presto-server \
+&& rm -f /root/presto-server-0.145.tar.gz
+
+# Add SUPERVISORD BOOTSTRAP SCRIPT
+ADD files/bootstrap-slave.sh /root/bootstrap.sh
+
+# COPY PRESTO TARGET CONFIGURATION
+COPY files/etc-slave/* /opt/presto-server/etc/
+
+# COPY PRESTO CLI
+COPY files/launcher /opt/presto-server/bin/launcher
+RUN chmod a+x /opt/presto-server/bin/launcher
+
+# PRESTO PORTS
+EXPOSE 8080
+
+CMD /root/startup.sh

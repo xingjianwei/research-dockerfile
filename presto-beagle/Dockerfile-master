@@ -1,0 +1,57 @@
+# Copyright 2016 Teradata
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#  docker build -t beagle/presto-master:0.153 -f Dockerfile-master  .
+FROM teradatalabs/presto-yarn-cdh5-hive-master
+MAINTAINER xjw <xingjw@beagledata.com>
+
+# ADD PRESTO FILE
+COPY files/presto-server-0.153.tar.gz /root/
+RUN tar xzvf /root/presto-server-0.153.tar.gz -C /opt/ \
+&& mv /opt/presto-server-0.153 /opt/presto-server \
+&& rm -f /root/presto-server-0.153.tar.gz 
+
+# Add SUPERVISORD BOOTSTRAP SCRIPT
+ADD files/bootstrap.sh /root/bootstrap.sh
+
+# COPY PRESTO TARGET CONFIGURATION
+COPY files/etc-master/* /opt/presto-server/etc/
+COPY files/etc-master-catalog/* /opt/presto-server/etc/catalog/
+# COPY PRESTO CLI
+COPY files/presto-cli-0.153-executable.jar /opt/presto-server/bin/presto-cli
+COPY files/launcher /opt/presto-server/bin/launcher
+RUN chmod a+x /opt/presto-server/bin/presto-cli /opt/presto-server/bin/launcher
+
+# COPY AIRPAL JAR
+COPY files/airpal-StunlockStudios-0.1.0-SNAPSHOT-all.jar /opt/airepal/
+# COPY AIRPAL  CONFIGURATION
+COPY files/arepal-yml/reference.yml /opt/airepal/
+
+# INIT DATABASE
+RUN /bin/bash -c "/usr/bin/mysqld_safe &"  \
+&& sleep 10s \
+&& mysql -u root -proot -e "CREATE DATABASE airpal;" \
+&& java -Duser.timezone=UTC \
+     -cp /opt/airepal/airpal-*-all.jar com.airbnb.airpal.AirpalApplication db migrate /opt/airepal/reference.yml \
+&& killall mysqld \
+&& sleep 10s
+
+# INSTALL SQOOP-1.4.6 DEPS ON KITE
+COPY files/sqoop-*.rpm files/kite*.rpm /root/
+RUN rpm -ivh  /root/kite*.rpm /root/sqoop-*.rpm \
+&& rm -f /root/sqoop-*.rpm /root/kite*.rpm
+
+# PRESTO PORTS
+EXPOSE 8080 8081 8082
+
+CMD /root/startup.sh
