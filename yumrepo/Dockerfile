@@ -8,10 +8,10 @@ ADD scan_repo.rb /
 ADD startup.sh /
 RUN yum -y install epel-release \
 && yum -y update \
-&& yum -y install ruby gcc ruby-devel supervisor createrepo yum-utils nginx \
+&& yum -y install gcc ruby ruby-devel supervisor createrepo yum-utils nginx \
 && yum clean all \
 && gem install rb-inotify \
-&& mkdir /repo 
+&& mkdir /repo \
 && mkdir /logs \
 && chmod 755 /scan_repo.rb \
 && chmod 755 /startup.sh 
