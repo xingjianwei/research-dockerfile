@@ -1,0 +1,14 @@
+._*
+.idea/
+file/
+node_modules/
+public/build
+test.js
+test1.js
+logs/
+
+/csvtest.js
+/file.csv
+/chart.csv
+/log.js
+/mysqltest.js
