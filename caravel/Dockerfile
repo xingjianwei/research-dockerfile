@@ -10,10 +10,9 @@ RUN pip install --upgrade pip \
 && pip install virtualenv \
 && cd /root/ \
 && git clone https://github.com/airbnb/superset.git 
-RUN cd superset \
-&& cd superset/assets \
-&& npm install 
-RUN npm run prod 
+RUN cd /root/superset/superset/assets \
+&& npm install \
+&& npm run prod 
 RUN cd /root/superset \
 && python setup.py install
 
