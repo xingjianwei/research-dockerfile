@@ -3,8 +3,8 @@ FROM xjw263/superset-dev:latest
 MAINTAINER xjw <xingjw@beagledata.com>
 RUN cd /root/superset/superset/assets \
 #&& npm install 
-&& npm run prod \
-&& cd /root/superset \
+&& npm run prod 
+RUN cd /root/superset \
 && python setup.py install
 
 
